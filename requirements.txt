@@ -1,0 +1,2 @@
+composio==0.21.1
+python-dotenv==1.2.2
