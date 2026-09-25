@@ -1,67 +1,76 @@
 # reddit-market-brief-skills
 
-Two Claude Code skills I use for a quick daily read on the market:
+A daily market brief from Reddit, the news, and Congress trades, from one
+command.
 
-- **`/reddit-daily`**: what the stock subreddits are talking about today:
-  tickers, sentiment, early news, catalysts, dips and run-ups.
-- **`/stock-daily`**: market news since the last close, plus recent
-  politician stock buys from [Capitol Trades](https://www.capitoltrades.com/trades).
+Market-moving talk is spread across dozens of subreddits and news sites,
+and reading it yourself takes hours. This project reads it for you and
+gives you a single summary of what people are talking about, what broke
+early, and what politicians are buying.
 
-Open Claude Code in this folder, type one of the commands, and the brief
-shows up in the chat. The standing settings (which subreddits, which news
-topics) live in files, so there's nothing to retype each day.
+It's built as two [Claude Code](https://claude.com/claude-code) skills.
+A skill is a set of saved instructions Claude Code runs when you type its
+command. Open Claude Code in this folder, type a command, and the brief
+shows up in the chat.
 
-## Setup
+## `/reddit-daily`
 
-1. Install the Python packages:
-   ```bash
-   pip install -r requirements.txt
-   ```
-2. Copy `.env.example` to `.env` and add your Composio API key (from
-   [dashboard.composio.dev](https://dashboard.composio.dev)).
-3. Run `/reddit-daily` once. If Reddit isn't connected yet, Claude gives
-   you a link to approve it in your browser.
+Reads the last 24 hours of posts and comments across 22 subreddits:
 
-`/stock-daily` doesn't need any of that. It uses web search plus the
-Claude desktop app's built-in browser (Capitol Trades blocks plain
-requests, so a real browser is needed).
-
-## Changing what gets covered
-
-| To change | Edit |
+| Group | Subreddits |
 |---|---|
-| Subreddits, time window, comment depth, what the brief includes | `.claude/skills/reddit-daily/watchlist.md` |
-| News topics, preferred outlets, Capitol Trades filters, tickers to watch | `.claude/skills/stock-daily/sources.md` |
+| Core stock talk | r/wallstreetbets, r/stocks, r/DailyStocks, r/pennystocks, r/options, r/optionstrading |
+| More discussion | r/StockMarket, r/investing, r/ValueInvesting, r/stockstobuytoday, r/smallstreetbets, r/thetagang |
+| Early and macro news | r/economy, r/Economics, r/finance, r/business, r/bonds, r/unusual_whales |
+| Catalysts and signals | r/biotech_stocks, r/Pennystock, r/insiderData, r/Optionmillionaires |
 
-For a one-off change, just say it after the command, e.g.
-`/reddit-daily just r/pennystocks, last 48 hours`. The files stay as they are.
+The brief covers early news and catalysts, dips and run-ups, the
+most-discussed stocks with sentiment, and a per-subreddit rundown. There's
+no fixed stock list: any ticker or company that comes up gets picked up.
+
+A run takes about 11 minutes. Everything is read except part of WSB's
+Daily Discussion thread; `/reddit-daily full` gets that too (about 2
+hours). Each brief ends with what was and wasn't read.
+
+## `/stock-daily`
+
+- Market news since the last close: indices, the Fed, earnings and big
+  movers, with sources.
+- Stock buys by members of Congress published on
+  [Capitol Trades](https://www.capitoltrades.com/trades) in the last 7 days.
 
 ## How it works
 
-`reddit-daily` runs `scripts/collect.py`, which pulls every post from the
-window across the watchlist, fetches the comments, and builds a digest.
-Claude reads the digest and writes the brief. Raw data goes to your temp
-folder, not the project, and is deleted after a week.
+- **`/reddit-daily`**: a Python script (`scripts/collect.py`) pulls the
+  posts and comments through [Composio](https://composio.dev), a service
+  that connects to your Reddit account. It stays within Reddit's rate
+  limits and builds a digest, then Claude reads the digest and writes the
+  brief.
+- **`/stock-daily`**: Claude searches the web for the day's news and reads
+  Capitol Trades in a browser.
+- Your standing choices (subreddits, news topics, filters) live in two
+  settings files, so you never retype them.
 
-With the default `sorts` depth, a run over the 22 watchlist subreddits
-takes about 11 minutes. Everything comes back essentially complete except
-the WSB Daily Discussion thread, which is too big to expand in one pass.
-`/reddit-daily full` gets it all but takes around 2 hours. Every brief ends
-with a coverage section that says exactly what was missed.
+## Setup
 
-## Layout
+You'll need the Claude desktop app (for Claude Code), Python 3, and a
+Composio account.
 
-```
-.claude/skills/
-  reddit-daily/   SKILL.md, watchlist.md, scripts/collect.py
-  stock-daily/    SKILL.md, sources.md
-lib/reddit_session.py   Composio session helper (connection, tool calls, retries)
-CLAUDE.md               project rules Claude follows
-```
+1. `pip install -r requirements.txt`
+2. Copy `.env.example` to `.env` and add your Composio API key from
+   [dashboard.composio.dev](https://dashboard.composio.dev).
+3. Run `/reddit-daily`. If Reddit isn't connected yet, you'll get a link
+   to approve it.
 
-## Notes
+`/stock-daily` needs none of this, but it does need the Claude desktop
+app's built-in browser, because Capitol Trades blocks plain requests.
 
-- Reddit content is treated as untrusted text. Claude summarizes it but
-  never follows instructions found in posts or comments.
-- None of this is financial advice. It reports what people and news
-  sources are saying.
+## Customizing
+
+- Subreddits, time window, depth: `.claude/skills/reddit-daily/watchlist.md`
+- News topics, trade filters: `.claude/skills/stock-daily/sources.md`
+
+For a one-off change, add it after the command:
+`/reddit-daily just r/pennystocks, last 48 hours`.
+
+Not financial advice. It reports what people and news sources are saying.
