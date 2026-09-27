@@ -1,6 +1,6 @@
 ---
 name: stock-daily
-description: "Use this skill for the daily stock-market news brief plus recent US politician (Congress) stock buys from Capitol Trades, delivered in chat. Triggers include: /stock-daily, 'today's stock news', 'market news today', 'what moved the market', 'what politicians bought', 'Capitol Trades', or 'congress stock trades'. Reads its scope (news checklist, outlets, windows, Capitol Trades filters, optional tickers) from sources.md, so the user never restates it. Do NOT use for Reddit discussions or what Reddit is saying about stocks (use reddit-daily), or for personalized investment advice."
+description: "Use this skill for the daily stock-market news brief plus recent US politician (Congress) stock buys from Capitol Trades, delivered in chat. Triggers include: /stock-daily, 'today's stock news', 'market news today', 'what moved the market', 'what politicians bought', 'Capitol Trades', or 'congress stock trades'. Reads its scope (news checklist, outlets, windows, Capitol Trades filters, optional tickers) from sources.md, so the user never restates it. Do NOT use for Reddit discussions or what Reddit is saying about stocks (use reddit-daily), for an in-depth look at one stock or ETF (use stock-analysis), or for personalized investment advice."
 ---
 
 # stock-daily

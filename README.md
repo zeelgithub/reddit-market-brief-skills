@@ -8,7 +8,7 @@ and reading it yourself takes hours. This project reads it for you and
 gives you a single summary of what people are talking about, what broke
 early, and what politicians are buying.
 
-It's built as two [Claude Code](https://claude.com/claude-code) skills.
+It's built as three [Claude Code](https://claude.com/claude-code) skills.
 A skill is a set of saved instructions Claude Code runs when you type its
 command. Open Claude Code in this folder, type a command, and the brief
 shows up in the chat.
@@ -39,6 +39,23 @@ hours). Each brief ends with what was and wasn't read.
 - Stock buys by members of Congress published on
   [Capitol Trades](https://www.capitoltrades.com/trades) in the last 7 days.
 
+## `/stock-analysis`
+
+Ask about one stock or ETF ("analyze NVDA", "is SPY a good ETF", "what is
+Reddit saying about GME") and get a full, sourced analysis:
+
+- performance vs the S&P 500 and the stock's sector, and the price trend
+- fundamentals scored with the metrics that fit its sector (software,
+  chips, banks, REITs, oil, biotech, ETFs, penny stocks and more)
+- valuation vs peers and its own history
+- news, earnings and upcoming catalysts
+- Wall Street ratings and price targets
+- every Reddit post about it in the last 7 days, with full comment trees
+- bull vs bear case and 12-month scenarios with the math shown
+
+It reports the buy/sell calls analysts and Reddit users make, with their
+reasons; it doesn't tell you what to do.
+
 ## How it works
 
 - **`/reddit-daily`**: a Python script (`scripts/collect.py`) pulls the
@@ -48,6 +65,11 @@ hours). Each brief ends with what was and wasn't read.
   brief.
 - **`/stock-daily`**: Claude searches the web for the day's news and reads
   Capitol Trades in a browser.
+- **`/stock-analysis`**: a Python script (`scripts/market.py`) pulls prices
+  and analyst data from Google Finance and Yahoo, and reported financials
+  from SEC filings. The Reddit script reads every post about the ticker.
+  Claude picks the sector's method file (`references/sectors/`), searches
+  the web for news, and writes the analysis.
 - Your standing choices (subreddits, news topics, filters) live in two
   settings files, so you never retype them.
 
@@ -58,7 +80,9 @@ Composio account.
 
 1. `pip install -r requirements.txt`
 2. Copy `.env.example` to `.env` and add your Composio API key from
-   [dashboard.composio.dev](https://dashboard.composio.dev).
+   [dashboard.composio.dev](https://dashboard.composio.dev). For
+   `/stock-analysis`, also set `SEC_USER_AGENT` to your name and email
+   (`Jane Doe jane@example.com`); SEC requires a contact.
 3. Run `/reddit-daily`. If Reddit isn't connected yet, you'll get a link
    to approve it.
 
@@ -68,6 +92,8 @@ app's built-in browser, because Capitol Trades blocks plain requests.
 ## Customizing
 
 - Subreddits, time window, depth: `.claude/skills/reddit-daily/watchlist.md`
+  (`/stock-analysis` uses the same subreddit list)
+- Analysis methods per sector: `.claude/skills/stock-analysis/references/`
 - News topics, trade filters: `.claude/skills/stock-daily/sources.md`
 
 For a one-off change, add it after the command:

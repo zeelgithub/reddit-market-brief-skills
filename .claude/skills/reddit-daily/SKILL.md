@@ -1,6 +1,6 @@
 ---
 name: reddit-daily
-description: "Use this skill for the daily Reddit stock brief: stock discussions, early market news and catalysts from the subreddits in watchlist.md (WallStreetBets, stocks, penny stocks, options trading, plus market-news and catalyst subreddits and any discovered that day), delivered in chat. Triggers include: /reddit-daily, 'what's going on on Reddit today', 'today's discussions', 'what stocks is Reddit talking about', 'what's WSB saying', or any request to fetch stock talk from Reddit. The subreddits, window, comment depth and brief contents come from watchlist.md, so the user never restates them. Do NOT use for market news from news outlets or for politician/Congress trades (use stock-daily), or for Reddit topics unrelated to stocks and markets."
+description: "Use this skill for the daily Reddit stock brief: stock discussions, early market news and catalysts from the subreddits in watchlist.md (WallStreetBets, stocks, penny stocks, options trading, plus market-news and catalyst subreddits and any discovered that day), delivered in chat. Triggers include: /reddit-daily, 'what's going on on Reddit today', 'today's discussions', 'what stocks is Reddit talking about', 'what's WSB saying', or any request to fetch market-wide stock talk from Reddit. The subreddits, window, comment depth and brief contents come from watchlist.md, so the user never restates them. Do NOT use for one specific stock or ETF, including 'what is Reddit saying about NVDA' (use stock-analysis), for market news from news outlets or politician/Congress trades (use stock-daily), or for Reddit topics unrelated to stocks and markets."
 ---
 
 # reddit-daily
@@ -151,8 +151,16 @@ thread couldn't be fully expanded, say so plainly with the numbers.
   429 ("HTTP 429" or "rate limit exceeded") for roughly 30–40s. 75
   calls/min held for 736 calls with no 429s, and the quota is shared with
   any other Reddit calls made around the same time.
-- `REDDIT_SEARCH_ACROSS_SUBREDDITS` returns a flat `data.posts` list (not
-  `children`), and the match is loose, so expect off-topic hits.
+- `REDDIT_SEARCH_ACROSS_SUBREDDITS` (`search_query`, `sort`, `time_filter`,
+  `limit` ≤100, `after`) returns a flat `data.posts` list (not `children`)
+  with `selftext` cut to about 200 characters. The query accepts
+  `subreddit:<name>` and `OR`. The match is loose ("Nvidia" also hits GPU
+  and Linux subreddits), so scope searches to subreddits. Checked 2026-09-26.
+- `REDDIT_RETRIEVE_POST_COMMENTS` also returns the full post under
+  `data.post_listing`; the collector uses it to replace truncated search text.
+
+The `scan` and `mentions` subcommands (one ticker, used by the
+stock-analysis skill) are documented in that skill's SKILL.md.
 
 ## Rough timings (22 watchlist subreddits, 24h, measured 2026-09-24)
 

@@ -8,6 +8,8 @@ hours") overrides this file for that one run.
 
 These are always included. The skill also adds other subreddits it finds
 active on the same topics that day, and labels them "discovered".
+`/stock-analysis` also searches this list when you ask about one ticker
+(with its own 7-day window and full comment depth).
 
 The notes after each subreddit come from research on 2026-09-24:
 activity is posts and comments in the last 24 hours, and "early" is how
